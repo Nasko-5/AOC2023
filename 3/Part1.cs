@@ -10,7 +10,7 @@ namespace AOCDayTemplate
             List<(int x, int y)> pointList = new List<(int x, int y)>();
             char c;
             int log = 3;
-            bool pretty = false;
+            bool pretty = true;
 
 
 

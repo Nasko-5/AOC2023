@@ -1,7 +1,4 @@
 ﻿
-using System.ComponentModel.Design;
-using System.Linq;
-
 namespace AOCDayTemplate
 {
     internal class Part1
@@ -13,14 +10,57 @@ namespace AOCDayTemplate
             foreach (var hand in input)
             {
                 game.Add(new Hand(hand.Item2, hand.Item1));
-                Console.WriteLine(game[game.Count-1]);
+                //Console.WriteLine(game[game.Count-1]);
             }
 
             Console.WriteLine();
 
             game = game.OrderByDescending(a => a.Type).ToList();
-            
 
+            // ok so an array/list of strings is sorted by the ascii value of each character in every string
+            // but what if i want to use different values for each of the characters defined in a dictionary??
+            for (int i = 0; i < game.Count-1; i++)
+            {
+                Hand handOne = game[i];
+                Hand handTwo = game[i + 1];
+
+                if (handOne.Type != handTwo.Type) continue;
+
+                foreach (var cards in handOne.handNum.Zip(handTwo.handNum))
+                {
+                    if (cards.First > cards.Second)
+                    {
+                        break;
+
+                    } else if (cards.Second > cards.First)
+                    {
+                        game.Insert(i + 2, handOne);
+                        game.RemoveAt(i);
+                        break;
+                    }
+                }
+
+            }
+
+            int sum = 0;
+            int rank = game.Count+1;
+            foreach (var hand in game)
+            {
+                rank--;
+                hand.Rank = rank;
+                Console.WriteLine(hand);
+            }
+
+            Console.WriteLine();
+
+            Console.WriteLine(string.Join(" + ", game.Select(a => $"{a.Bid} * {a.Rank}")));
+
+            foreach(var hand in game)
+            {
+                sum += hand.Bid * hand.Rank;
+            }
+
+            Console.WriteLine($"Total winnings: {sum}");
         }
 
 
@@ -33,7 +73,9 @@ namespace AOCDayTemplate
             public int Rank { get; set; }
             public int Type { get; set; }
 
-            Dictionary<char, int> cards = new Dictionary<char, int>()
+            public List<int> handNum = new();
+
+            public Dictionary<char, int> cards = new Dictionary<char, int>()
             {
                 {'A', 13}, {'K', 12}, {'Q', 11}, {'J', 10}, {'T', 9}, {'9', 8}, {'8', 7}, {'7', 6}, {'6', 5}, {'5', 4}, {'4', 3}, {'3', 2}, {'2', 1}
             };
@@ -48,17 +90,7 @@ namespace AOCDayTemplate
                 { 2, "One pair" },
                 { 1, "High card" }
             };
-            /*
-             *
-               Five of a kind, where all five cards have the same label: AAAAA
-               Four of a kind, where four cards have the same label and one card has a different label: AA8AA
-               Full house, where three cards have the same label, and the remaining two cards share a different label: 23332
-               Three of a kind, where three cards have the same label, and the remaining two cards are each different from any other card in the hand: TTT98
-               Two pair, where two cards share one label, two other cards share a second label, and the remaining card has a third label: 23432
-               One pair, where two cards share one label, and the other three cards have a different label from the pair and each other: A23A4
-               High card, where all cards' labels are distinct: 23456
-               
-             */
+
             public Hand(int bid, string handText)
             {
                 Bid = bid;
@@ -104,12 +136,12 @@ namespace AOCDayTemplate
                     Type = 1;
                 }
 
-
+                handNum = HandText.Select(a => cards[a]).ToList();
             }
 
             public override string ToString()
             {
-                return $"{HandText} is a {types[Type]} card, with a bid of {Bid}$ and rank {Rank}";
+                return $"{HandText}, the first card has a value of {cards[HandText[0]]}. The hand is a {types[Type]} hand, with a bid of {Bid}$ and rank {Rank}";
             }
         }
     }

@@ -15,7 +15,9 @@ namespace AOCDayTemplate
             int log = 3;
             bool pretty = true;
 
-            Thread.Sleep(5000);
+          
+
+            //Thread.Sleep(5000);
 
             Console.CursorVisible = false;
 

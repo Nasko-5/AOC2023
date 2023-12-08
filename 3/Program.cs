@@ -4,14 +4,15 @@
     {
         static void Main(string[] args)
         {
-            string basePath = File.ReadAllText(@"D:\My stuff\.programming\advent of code\basepath.txt");
+            string basePath = System.Reflection.Assembly.GetEntryAssembly().Location;
+            basePath = basePath[0..(basePath.Length - 26)];
 
             byte day = 3;
             short year = 2023;
             byte puzzlePart = 2;
             bool testing = true;
 
-            string dayPath = $@"{basePath}\c#\{year}\{day}";
+            string dayPath = $@"{basePath}";
 
             if (!Directory.Exists(dayPath))
             {
@@ -78,7 +79,8 @@
             }
 
             string[] parsed = input.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-            
+
+
             if (puzzlePart == 1)
             {
                 Part1.Solve(parsed);
@@ -86,6 +88,8 @@
             {
                 Part2.Solve(parsed);
             }
+
+            Console.Read();
         }
     }
 }
