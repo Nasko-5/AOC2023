@@ -87,7 +87,7 @@ namespace AOCDayTemplate
                 .Select(map => map.Split("\r\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                         .Select(mapmap => mapmap
                             .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                            .Select(int.Parse)
+                            .Select(long.Parse)
                             .ToArray())
                         .ToArray())
                 .ToArray();

@@ -1,12 +1,12 @@
 ﻿
 namespace AOCDayTemplate
 {
-    internal class Part1
+    class Part1
     {
-        internal static void Solve(int[][][] input)
+        public static void Solve(long[][][] input)
         {
-            int[]     seeds = input[0][0];
-            int[][][] maps  = input[1..7];
+            long[]     seeds = input[0][0];
+            long[][][] maps  = input[1..8];
 
             List<mapRange> mapRanges = new List<mapRange>();
 
@@ -19,68 +19,88 @@ namespace AOCDayTemplate
                 }
             }
 
+
+            string[] mapNames = new[] { "seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location" };
+            int onMap = 0;
+
+            Console.WriteLine($"{mapNames[onMap]}{new string(' ', 12-mapNames[onMap].Length)}: {string.Join(" ", seeds)}");
+
             foreach (var map in mapRanges)
             {
-                Console.WriteLine(string.Join(" ", seeds));
-
-                for (int i = 0; i < seeds.Length-1; i++)
+                for (long i = 0; i < seeds.Length; i++)
                 {
                     seeds[i] = map.ConvertFrom(seeds[i]);
                 }
+
+                onMap++;
+                Console.WriteLine($"{mapNames[onMap]}{new string(' ', 12 - mapNames[onMap].Length)}: {string.Join(" ", seeds)}");
+            }
+
+            Console.WriteLine(new string('-', 13));
+
+            Array.Sort(seeds);
+            Console.WriteLine($"sorted{new string(' ', 6)}: {string.Join(" ", seeds)}");
+            Console.WriteLine($"lowest{new string(' ', 6)}: {seeds[0]}");
+
+
+        }
+
+        class myRange
+        {
+            public long Start { get; set; }
+            public long End { get; set; }
+
+            public myRange(long start, long end)
+            {
+                Start = start; End = end; 
             }
         }
 
         class mapRange
         {
-            private List<Range> sourceRanges = new List<Range>();
-            private List<Range> resultRanges = new List<Range>();
-
-            public void AddRange(int sourceRangeStart, int resultRangeStart, int rangeLength)
+            private Dictionary<myRange, myRange> rangeMap = new();
+            public void AddRange(long sourceRangeStart, long resultRangeStart, long rangeLength)
             {
-                sourceRanges.Add(new Range(sourceRangeStart, sourceRangeStart+rangeLength));
-                resultRanges.Add(new Range(resultRangeStart, resultRangeStart+rangeLength));
+                rangeMap.Add(new myRange(sourceRangeStart, sourceRangeStart + rangeLength), new myRange(resultRangeStart, resultRangeStart + rangeLength));
             }
 
 
-            public static int ConvertRange(
-                Range originalRange,
-                Range resultRange, // desired range
-                int value) // value to convert
+            public static long ConvertRange(
+                myRange originalRange,
+                myRange resultRange, // desired range
+                long value) // value to convert
             {
-                double scale = (double)(resultRange.End.Value - resultRange.Start.Value) / (originalRange.End.Value - originalRange.Start.Value);
-                return (int)(resultRange.Start.Value + ((value - originalRange.Start.Value) * scale));
+                double scale = (double)(resultRange.End - resultRange.Start) / (originalRange.End - originalRange.Start);
+                return (long)(resultRange.Start + ((value - originalRange.Start) * scale));
             }
 
 
 
 
-            public int ConvertFrom(int number)
+            public long ConvertFrom(long number)
             {
-                foreach (Range range in sourceRanges)
+                foreach (myRange range in rangeMap.Keys)
                 {
-                    if ( range.Start.Value <= number && number <= range.End.Value)
+                    bool inRange = number >= range.Start && range.End >= number;
+
+                    if (inRange)
                     {
-                        var usingSourceRange = sourceRanges
-                            .Where(range => range.Start.Value <= number && number <= range.End.Value)
-                            .ToArray()[0];
+                        myRange sourceRange = range;
+                        myRange resultRange = rangeMap[range];
 
-                        var usingResultRange = resultRanges[sourceRanges.IndexOf(usingSourceRange)];
+                        long resultValue = ConvertRange(sourceRange, resultRange, number);
 
-                        int converted = ConvertRange(usingSourceRange, usingResultRange, number);
+                        /*Console.WriteLine($"Converting {number} -> {resultValue} (from {sourceRange.Start}-{sourceRange.End} " +
+                                          $"-> {resultRange.Start}-{resultRange.End})");*/
 
-                        Console.WriteLine(
-                            $"Mapping value {number} from sr[{usingSourceRange.Start.Value}, {usingSourceRange.End.Value}] to rr[{usingResultRange.Start.Value}, {usingResultRange.End.Value}] -> {converted}");
-
-                        return converted;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"{number} is not in any of the ranges");
-                        return number;
+                        return resultValue;
                     }
                 }
 
-                return -11111111;
+
+
+                //Console.WriteLine($"None match! returning {number}");
+                return number;
             }
         }
     }
