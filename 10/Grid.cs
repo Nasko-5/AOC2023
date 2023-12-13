@@ -3,8 +3,8 @@
 public class Grid<T>
 {
     private T[][] Values = new T[1][];
-    private int gridWidth;
-    private int gridHeight;
+    public readonly int gridWidth;
+    public readonly int gridHeight;
 
     public Grid(IEnumerable<IEnumerable<T>> initialValues)
     {
@@ -70,6 +70,32 @@ public class Grid<T>
         };
     }
 
+    // =~- - Get direct neighbors - -~=
+
+    // =~- - As a 1D array - -~=
+
+    public T[] GetDirectNeighbors1D(int x, int y)
+    {
+        return new T[9]
+        {
+            FancyIndex(x-1, y-1), FancyIndex(x, y-1), FancyIndex(x+1, y-1),
+            FancyIndex(x-1, y),      FancyIndex(x, y),     FancyIndex(x+1, y),
+            FancyIndex(x-1, y + 1), FancyIndex(x, y + 1), FancyIndex(x+1, y+1)
+        };
+    }
+
+    // =~- - As a 2D array - -~=
+
+    public T[,] GetDirectNeighbors2D(int x, int y)
+    {
+        return new T[3,3]
+        {
+            { FancyIndex(x-1, y-1), FancyIndex(x, y-1), FancyIndex(x+1, y-1) },
+            { FancyIndex(x-1, y),      FancyIndex(x, y),     FancyIndex(x+1, y) },
+            { FancyIndex(x-1, y + 1), FancyIndex(x, y + 1), FancyIndex(x+1, y+1) }
+        };
+    }
+
     // =~- - Get any N neighbors - -~=
 
     // =~- - As a 2D array - -~= //
@@ -123,7 +149,7 @@ public class Grid<T>
         {
             for (int j = 0; j < neighborSquareSideLength; j++)
             {
-                neighbors[j * (neighborSquareSideLength + i)] = FancyIndex(neighborSquareStart.x + j, neighborSquareStart.y + i);
+                neighbors[i * neighborSquareSideLength + j] = FancyIndex(neighborSquareStart.x + j, neighborSquareStart.y + i);
             }
         }
 
@@ -143,7 +169,7 @@ public class Grid<T>
         {
             for (int j = 0; j < neighborSquareSideLength; j++)
             {
-                neighbors[j * (neighborSquareSideLength + i)] = FancyWrapIndex(neighborSquareStart.x + j, neighborSquareStart.y + i);
+                neighbors[i * neighborSquareSideLength + j] = FancyWrapIndex(neighborSquareStart.x + j, neighborSquareStart.y + i);
             }
         }
 
