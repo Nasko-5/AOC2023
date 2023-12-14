@@ -1,4 +1,5 @@
-﻿namespace AOCDayTemplate;
+﻿
+namespace AOCDayTemplate;
 
 public class Grid<T>
 {
@@ -13,6 +14,8 @@ public class Grid<T>
         gridWidth = Values[0].Length;
         gridHeight = Values.Length;
     }
+
+
 
 
     // ===--- -                                                       - ---=== //
@@ -107,7 +110,7 @@ public class Grid<T>
 
         T[,] neighbors = new T[neighborSquareSideLength, neighborSquareSideLength];
 
-        for (int i = 0; i < neighborSquareSideLength; i++)
+        for (int i = 0; i < neighborSquareSideLength; i++)  
         {
             for (int j = 0; j < neighborSquareSideLength; j++)
             {
@@ -129,7 +132,7 @@ public class Grid<T>
         {
             for (int j = 0; j < neighborSquareSideLength; j++)
             {
-                neighbors[i, j] = FancyWrapIndex(neighborSquareStart.x + j, neighborSquareStart.y + i);
+                neighbors[i, j] = FancyWrapIndex(neighborSquareStart.x + i, neighborSquareStart.y + j);
             }
         }
 
@@ -177,6 +180,24 @@ public class Grid<T>
     }
 
     // =~- - As a 2D array - -~= //
+
+    public (int x, int y)[] GetPointNeighbors1D(int x, int y, int n)
+    {
+        int neighborSquareSideLength = (2 * n) + 1;
+        (int x, int y) neighborSquareStart = (x - n, y - n);
+
+        (int x, int y)[] neighbors = new (int x, int y)[neighborSquareSideLength * neighborSquareSideLength];
+
+        for (int i = 0; i < neighborSquareSideLength; i++)
+        {
+            for (int j = 0; j < neighborSquareSideLength; j++)
+            {
+                neighbors[i * neighborSquareSideLength + j] = (neighborSquareStart.x + j, neighborSquareStart.y + i);
+            }
+        }
+
+        return neighbors;
+    }
 
     public (int x, int y)[,] GetPointNeighbors2D(int x, int y, int n)
     {
@@ -454,4 +475,5 @@ public class Grid<T>
 
         return default(T);
     }
+
 }
