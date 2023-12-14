@@ -50,8 +50,13 @@ namespace AOCDayTemplate
                 };
             Console.CursorVisible = false;
 
+            var SLocation = FindS(pipes, 8);
+            var neighborChars2D = pipes.GetNeighbors2D(SLocation.x, SLocation.y, 8);
+            
+            Thread.Sleep(1000);
+            Visualize2DGrid(neighborChars2D, 1, 4);
 
-            var SLocation = FindS(pipes, 1);
+
         }
 
         public static (int x, int y) FindS(Grid<char> pipes, int n)
@@ -63,7 +68,7 @@ namespace AOCDayTemplate
                     var neighborChars2D = pipes.GetNeighbors2D(j, i, n);
                     var neighborChars1dD = pipes.GetNeighbors1D(j, i, n);
 
-                    Visualize2DGrid(neighborChars2D, 1, 5);
+                    Visualize2DGrid(neighborChars2D, 1, 4);
 
                     if (neighborChars1dD.Contains('S'))
                     {
@@ -71,22 +76,14 @@ namespace AOCDayTemplate
                         var startingPipeIndex = Array.IndexOf(neighborChars1dD, 'S');
                         var startingPipeLocation = neighborsAsPoints1D[startingPipeIndex];
 
-                        var a = (startingPipeLocation.x - j, startingPipeLocation.y - i);
+                        /*Console.ForegroundColor = ConsoleColor.Cyan;
+                        //Console.SetCursorPosition((startingPipeIndex % ((2 * n) + 1)) + 1,
+                        //                          (startingPipeIndex / ((2 * n) + 1)) + 4);
+                        //Console.Write('S');
+                        //Console.ResetColor();
 
-                        // Issue is here!
-
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        int visA = pipes.gridWidth - ((2 * n) + 1);
-                        int visB = pipes.gridHeight - ((2 * n) + 1);
-                        Console.SetCursorPosition(1 + Math.Abs(visA - startingPipeLocation.x),
-                                                   5 + Math.Abs(visB - startingPipeLocation.y));
-                        Console.Write('S');
-                        Console.ResetColor();
-
-                        Console.SetCursorPosition(0, 20);
+                        //Console.SetCursorPosition(0, 20);*/
                         return startingPipeLocation;
-
-
                     }
 
                     Thread.Sleep(10);
@@ -95,20 +92,25 @@ namespace AOCDayTemplate
 
             return (int.MinValue, int.MinValue);
         }
-        public static void Visualize2DGrid(char[,] grid, int x, int y)
-        {
 
+        public static void ClearWay(char[,] grid, int x, int y)
+        {
             Console.SetCursorPosition(x, y);
 
             for (int row = 0; row < grid.GetLength(0); row++)
             {
                 for (int column = 0; column < grid.GetLength(1); column++)
-                { 
-                    Console.Write("  ");
-                
+                {
+                    Console.Write(" ");
+
                 }
-                Console.SetCursorPosition(x, y + (row+1));
+                Console.SetCursorPosition(x, y + (row + 1));
             }
+        }
+
+        public static void Visualize2DGrid(char[,] grid, int x, int y)
+        {
+            ClearWay(grid, x, y);
 
             Console.SetCursorPosition(x, y);
 
@@ -130,23 +132,23 @@ namespace AOCDayTemplate
                             Console.ForegroundColor = ConsoleColor.Black;
                             Console.Write($"{atChar}");
                             Console.ResetColor();
-                            Console.Write($" ");
+                            //Console.Write($" ");
                         } else
                         {
-                            if (new char[6] {'|', '-', 'F', '7', 'L', 'J'}.Contains(atChar))
+                            if (atChar == 'S')
                             {
                                 Console.BackgroundColor = ConsoleColor.Black;
-                                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                                Console.ForegroundColor = ConsoleColor.Cyan;
                                 Console.Write($"{atChar}");
                                 Console.ResetColor();
-                                Console.Write($" ");
-                            } else
+                            }
+                            else
                             {
                                 Console.BackgroundColor = ConsoleColor.Black;
                                 Console.ForegroundColor = ConsoleColor.DarkGray;
                                 Console.Write($"{atChar}");
                                 Console.ResetColor();
-                                Console.Write($" ");
+                                //Console.Write($" ");
                             }
                         }
                     }
